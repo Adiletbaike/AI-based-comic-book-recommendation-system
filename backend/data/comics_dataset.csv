@@ -1,0 +1,6 @@
+id,title,author,publisher,genre,year,rating,description,tags,cover_image
+1,"Spider-Man: Blue","Jeph Loeb",Marvel,Superhero,2002,4.6,"Peter Parker reflects on his past and his love for Gwen Stacy.","[""romance"",""classic"",""marvel""]",/covers/spiderman-blue.jpg
+2,"Batman: Year One","Frank Miller",DC,Superhero,1987,4.7,"Bruce Wayne begins his crusade as Batman in Gotham City.","[""origin"",""noir"",""dc""]",/covers/batman-year-one.jpg
+3,"Saga","Brian K. Vaughan",Image,"Space Opera",2012,4.5,"Two soldiers from warring planets protect their daughter.","[""sci-fi"",""family"",""space""]",/covers/saga.jpg
+4,"Watchmen","Alan Moore",DC,Superhero,1986,4.8,"Masked vigilantes face a world on the edge of war.","[""classic"",""dark"",""mystery""]",/covers/watchmen.jpg
+5,"Ms. Marvel","G. Willow Wilson",Marvel,"Young Adult",2014,4.4,"Kamala Khan discovers her powers and becomes Ms. Marvel.","[""teen"",""hero"",""marvel""]",/covers/ms-marvel.jpg
