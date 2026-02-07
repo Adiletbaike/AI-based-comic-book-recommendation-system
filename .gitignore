@@ -1,5 +1,7 @@
 .DS_Store
 .env
+.runtime-port
+*.pid
 *.sqlite3
 *.db
 *.log
@@ -23,6 +25,17 @@ dist/
 build/
 .vite/
 *.tsbuildinfo
+
+# Recommender index artifacts
+backend/data/catalog.faiss
+backend/data/catalog_embeddings.npy
+backend/data/catalog_meta.json
+
+# Local dev runner
+backend/dev.log
+frontend/dev.log
+frontend/.node_modules.sha256
+backend/.venv/.requirements.sha256
 
 # IDE
 .vscode/
