@@ -4,6 +4,10 @@ from ..utils.helpers import utc_now
 
 class UserComic(db.Model):
     __tablename__ = "user_comics"
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "comic_id", name="uq_user_comic"),
+        db.Index("ix_user_comics_user_status", "user_id", "status"),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)

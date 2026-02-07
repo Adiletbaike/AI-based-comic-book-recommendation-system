@@ -5,6 +5,9 @@ class Comic(db.Model):
     __tablename__ = "comics"
 
     id = db.Column(db.Integer, primary_key=True)
+    # Link back to catalog items so personalization can map interactions onto the full catalog.
+    source = db.Column(db.String(50), default="catalog")
+    source_id = db.Column(db.String(128), index=True)
     title = db.Column(db.String(255), nullable=False)
     author = db.Column(db.String(255))
     publisher = db.Column(db.String(255))
