@@ -2,6 +2,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { RotateCcw, Trash2, X } from "lucide-react";
 import { ComicContext } from "../context/ComicContext";
 import { getLibrary } from "../services/library";
+import { normalizeCoverUrl } from "../utils/cover";
 
 const TrashPage = () => {
   const ctx = useContext(ComicContext);
@@ -107,7 +108,7 @@ const TrashPage = () => {
         )}
 
         {items.map((comic) => {
-          const cover = comic.coverImage || comic.cover_image;
+          const cover = normalizeCoverUrl(comic.coverImage || comic.cover_image);
           return (
             <div
               key={comic.id}

@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { ComicContext } from "../context/ComicContext";
+import { normalizeCoverUrl } from "../utils/cover";
 
 const LibraryPage = () => {
   const ctx = useContext(ComicContext);
@@ -33,7 +34,7 @@ const LibraryPage = () => {
   };
 
   const renderComic = (comic, status) => {
-    const cover = comic.coverImage || comic.cover_image;
+    const cover = normalizeCoverUrl(comic.coverImage || comic.cover_image);
     return (
       <div
         key={comic.id}

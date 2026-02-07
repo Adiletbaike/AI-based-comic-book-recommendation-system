@@ -11,10 +11,17 @@ export const ComicProvider = ({ children }) => {
   const [completed, setCompleted] = useState([]);
   const [trash, setTrash] = useState([]);
 
+  const stableKey = (item) => {
+    if (!item) return null;
+    if (item.id != null) return `id:${String(item.id)}`;
+    return `ta:${String(item.title || "")}|${String(item.author || "")}`;
+  };
+
   const ensureUnique = (items) => {
     const map = new Map();
     items.forEach((item) => {
-      if (item && item.id != null) map.set(item.id, item);
+      const key = stableKey(item);
+      if (key) map.set(key, item);
     });
     return Array.from(map.values());
   };
@@ -54,18 +61,34 @@ export const ComicProvider = ({ children }) => {
     load();
   }, [token, isReady]);
 
-  const addComic = (status, comic) => {
-    if (!comic || comic.id == null) return;
+  const addComic = async (status, comic) => {
+    if (!comic) return;
+
+    // If authenticated, persist first and then store the server's canonical comic (numeric DB id).
+    if (token) {
+      try {
+        const resp = await setStatus(status, comic);
+        const serverComic = resp?.comic;
+        if (!serverComic) return;
+
+        if (status === "favorite") setFavorites((prev) => ensureUnique([serverComic, ...prev]));
+        if (status === "reading") setReadingList((prev) => ensureUnique([serverComic, ...prev]));
+        if (status === "completed") setCompleted((prev) => ensureUnique([serverComic, ...prev]));
+        if (status === "trash") setTrash((prev) => ensureUnique([serverComic, ...prev]));
+        return;
+      } catch (err) {
+        return;
+      }
+    }
+
+    // Unauthenticated: local-only library.
     if (status === "favorite") setFavorites((prev) => ensureUnique([comic, ...prev]));
     if (status === "reading") setReadingList((prev) => ensureUnique([comic, ...prev]));
     if (status === "completed") setCompleted((prev) => ensureUnique([comic, ...prev]));
     if (status === "trash") setTrash((prev) => ensureUnique([comic, ...prev]));
-    if (token) {
-      setStatus(status, comic).catch(() => {});
-    }
   };
 
-  const moveComic = (comicId, fromStatus, toStatus) => {
+  const moveComic = async (comicId, fromStatus, toStatus) => {
     if (!comicId || fromStatus === toStatus) return;
     const pull = (list) => list.filter((item) => item.id !== comicId);
     const find = (list) => list.find((item) => item.id === comicId);
@@ -82,15 +105,21 @@ export const ComicProvider = ({ children }) => {
     if (fromStatus === "completed") setCompleted((prev) => pull(prev));
     if (fromStatus === "trash") setTrash((prev) => pull(prev));
 
-    addComic(toStatus, moving);
+    await addComic(toStatus, moving);
   };
 
-  const removeFromTrash = (comicId) => {
+  const removeFromTrash = async (comicId) => {
     if (!comicId) return;
-    setTrash((prev) => prev.filter((item) => item.id !== comicId));
     if (token) {
-      deleteFromTrash(comicId).catch(() => {});
+      try {
+        await deleteFromTrash(comicId);
+        setTrash((prev) => prev.filter((item) => item.id !== comicId));
+      } catch (err) {
+        return;
+      }
+      return;
     }
+    setTrash((prev) => prev.filter((item) => item.id !== comicId));
   };
 
   const value = useMemo(

@@ -1,10 +1,20 @@
 import { useContext } from "react";
 import { ComicContext } from "../../context/ComicContext";
+import { normalizeCoverUrl } from "../../utils/cover";
 
 const ComicCard = ({ comic }) => {
   const ctx = useContext(ComicContext);
-  const cover = comic.coverImage || comic.cover_image;
-  const isFavorite = ctx?.favorites?.some((item) => item.id === comic.id);
+  const cover = normalizeCoverUrl(comic.coverImage || comic.cover_image);
+  const isFavorite = ctx?.favorites?.some((item) => {
+    if (!item) return false;
+    if (item.id != null && comic?.id != null && item.id === comic.id) return true;
+    return (
+      String(item.title || "").trim().toLowerCase() ===
+        String(comic?.title || "").trim().toLowerCase() &&
+      String(item.author || "").trim().toLowerCase() ===
+        String(comic?.author || "").trim().toLowerCase()
+    );
+  });
 
   return (
     <div className="flex gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-[#0f0f0f]">

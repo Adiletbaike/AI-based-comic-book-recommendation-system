@@ -14,10 +14,23 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      const parsed = JSON.parse(stored);
-      setToken(parsed.token);
-      setUser(parsed.user);
-      setAuthToken(parsed.token);
+      try {
+        const parsed = JSON.parse(stored);
+        const rawToken = parsed?.token;
+        const t = rawToken != null ? String(rawToken).trim() : "";
+        const looksLikeJwt = t.split(".").length === 3;
+        if (t && t !== "null" && t !== "undefined" && looksLikeJwt) {
+          setToken(t);
+          setUser(parsed.user || null);
+          setAuthToken(t);
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+          setAuthToken(null);
+        }
+      } catch (e) {
+        localStorage.removeItem(STORAGE_KEY);
+        setAuthToken(null);
+      }
     }
     setIsReady(true);
   }, []);

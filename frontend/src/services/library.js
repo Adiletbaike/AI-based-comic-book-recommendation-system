@@ -21,7 +21,9 @@ export const getLibrary = async (status, query) => {
 };
 
 export const setStatus = async (status, comic) => {
-  const { data } = await api.post(statusToPost[status], { comic });
+  const isDbId = Number.isInteger(comic?.id);
+  const payload = isDbId ? { comic_id: comic.id } : { comic };
+  const { data } = await api.post(statusToPost[status], payload);
   return data;
 };
 
