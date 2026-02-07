@@ -38,14 +38,14 @@ const ChatInterface = ({ onRecommendations }) => {
       setMessages((prev) => [
         ...prev,
         {
-          text: "Bir hata oluştu. Lütfen tekrar deneyin.",
+          text: "Something went wrong. Please try again.",
           isUser: false,
         },
       ]);
       if (onRecommendations) {
         onRecommendations({
           recommendations: [],
-          explanation: "Öneriler alınamadı.",
+          explanation: "Unable to fetch recommendations.",
           prompt: userText,
         });
       }

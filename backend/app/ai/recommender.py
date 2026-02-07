@@ -15,7 +15,13 @@ class ComicRecommender:
         self.dataset_path = dataset_path
         self.embeddings_path = embeddings_path
         if dataset_path and os.path.exists(dataset_path):
-            self.comics_df = pd.read_csv(dataset_path)
+            self.comics_df = pd.read_csv(
+                dataset_path,
+                engine="python",
+                on_bad_lines="skip",
+                quotechar='"',
+                escapechar="\\",
+            )
         else:
             self.comics_df = pd.DataFrame()
 
@@ -62,11 +68,22 @@ class ComicRecommender:
             lambda x: [t.strip().lower() for t in str(x).split(",") if t.strip()]
         )
 
-        df["genre"] = df.get("genre", "").fillna("")
-        df["title"] = df.get("title", "").fillna("")
-        df["author"] = df.get("author", "").fillna("")
-        df["series"] = df.get("series", "").fillna("")
-        df["description"] = df.get("description", "").fillna("")
+        if "genre" not in df.columns:
+            df["genre"] = ""
+        if "title" not in df.columns:
+            df["title"] = ""
+        if "author" not in df.columns:
+            df["author"] = ""
+        if "series" not in df.columns:
+            df["series"] = ""
+        if "description" not in df.columns:
+            df["description"] = ""
+
+        df["genre"] = df["genre"].fillna("")
+        df["title"] = df["title"].fillna("")
+        df["author"] = df["author"].fillna("")
+        df["series"] = df["series"].fillna("")
+        df["description"] = df["description"].fillna("")
 
         df["search_text"] = (
             df["title"].astype(str)
